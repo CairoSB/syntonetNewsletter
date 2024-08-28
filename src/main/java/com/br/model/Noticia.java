@@ -18,6 +18,7 @@ public class Noticia {
 	private String titulo;
 	private String descricao;
 	private String link;
+	private Boolean processada = false;
 	
 	public Noticia(String titulo, String descricao, String link) {
 		this.titulo = titulo;
@@ -54,7 +55,13 @@ public class Noticia {
 	public void setLink(String link) {
 		this.link = link;
 	}
-	
-	
+
+	public Boolean getProcessada() {
+		return processada;
+	}
+
+	public void setProcessada(Boolean processada) {
+		this.processada = processada;
+	}
 
 }
