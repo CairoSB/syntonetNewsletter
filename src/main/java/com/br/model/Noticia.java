@@ -15,9 +15,18 @@ public class Noticia {
 	@Basic(optional = false)
 	@Column(name = "id",unique=true, nullable = false)
 	private Long id;
+	
+	@Basic(optional = false)
+	@Column(name = "titulo",unique=false, nullable = false)
 	private String titulo;
+	
+	@Basic(optional = false)
+	@Column(name = "descricao",unique=false, nullable = false)
 	private String descricao;
+	
+	@Basic(optional = true)
 	private String link;
+	
 	private Boolean processada = false;
 	
 	public Noticia(String titulo, String descricao, String link) {

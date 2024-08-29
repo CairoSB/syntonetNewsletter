@@ -1,5 +1,6 @@
 package com.br.service;
 
+import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +14,14 @@ public class CadastroNoticia {
 	private NoticiasRepository noticiasRepository;
 	
 	public void add(NoticiaDTO noticiaDTO) {
-		Noticia cliente = new Noticia(noticiaDTO.getTitulo(), noticiaDTO.getDescricao(), noticiaDTO.getLink());
-		noticiasRepository.saveAndFlush(cliente);
+		
+		UrlValidator validator = new UrlValidator();
+		
+		//Checando se o link informado é uma URL valida ou não.
+		if(validator.isValid(noticiaDTO.getLink())) {
+			Noticia cliente = new Noticia(noticiaDTO.getTitulo(), noticiaDTO.getDescricao(), noticiaDTO.getLink());
+			noticiasRepository.saveAndFlush(cliente);
+		}
 	}
 
 }

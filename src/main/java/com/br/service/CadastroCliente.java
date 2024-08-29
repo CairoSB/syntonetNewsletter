@@ -1,5 +1,6 @@
 package com.br.service;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,11 @@ public class CadastroCliente {
 	private ClienteRepository clienteRepository;
 	
 	public void add(ClienteDTO clienteDto) {
-		Cliente cliente = new Cliente(clienteDto.getName(), clienteDto.getEmail(), clienteDto.getbDay());
-		clienteRepository.saveAndFlush(cliente);
+		
+		// Checando se o e-mail informado é valido ou não.
+		if(EmailValidator.getInstance().isValid(clienteDto.getEmail())) {
+			Cliente cliente = new Cliente(clienteDto.getName(), clienteDto.getEmail(), clienteDto.getbDay());
+			clienteRepository.saveAndFlush(cliente);
+		}
 	}
 }

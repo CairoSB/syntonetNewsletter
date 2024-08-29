@@ -15,8 +15,16 @@ public class Cliente {
 	@Basic(optional = false)
 	@Column(name = "id",unique=true, nullable = false)
 	private Long id;
+	
+	@Basic(optional = false)
+	@Column(name = "name",unique=false, nullable = false)
 	private String name;
+	
+	@Basic(optional = false)
+	@Column(name = "email",unique=true, nullable = false)
 	private String email;
+	
+	@Basic(optional = true)
 	private String bDay;
 	
 	public Cliente(String name, String email, String bDay) {
