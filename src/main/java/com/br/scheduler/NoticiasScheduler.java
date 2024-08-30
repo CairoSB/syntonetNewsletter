@@ -1,5 +1,6 @@
 package com.br.scheduler;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,34 +28,40 @@ public class NoticiasScheduler {
 
 	@Scheduled(cron = "0 0 8 * * *")
 	private void enviarNoticias() {
-		List<Noticia> noticias = noticiasRepository.findAll();
+		// Busca lista de todos clientes cadastrados no banco.
 		List<Cliente> clientes = clienteRepository.findAll();
+		// Busca lista de todas noticias cadastradas no banco.
+		List<Noticia> noticias = noticiasRepository.findAll();
+		// Ira guardar apenas as noticias que estiverem com "Processada" = "false"
+		List<Noticia> noticiasParaEnviar = new ArrayList<>();
+		
+		// Altera o valor do "Processada" de todas noticias no banco para "true"
+		noticiasRepository.processAll();
+		
+		// Filtra apenas as noticias não enviadas ainda (Noticias com "Processada" = "false") 
 		for (Noticia noticia : noticias) {
-			
-			List<Noticia> noticiasParaEnviar = null;
-			
 			if(!noticia.getProcessada()) {
 				noticiasParaEnviar.add(noticia);
-				//To-do: Alterar valor do "Processada" desta noticia para true no banco.
+			}
+		}
+		
+		
+		for (Cliente cliente: clientes) {
+			String msg = new String();
+			msg = "Bom dia " + cliente.getName() + " !";
+			
+			//To-do: Corrigir formato da data do bDay
+			if (cliente.getbDay() == new Date().toString()) {
+				msg += "\r\n Feliz aniversário!";
 			}
 			
-			for (Cliente cliente: clientes) {
-				String msg = new String();
-				msg = "Bom dia " + cliente.getName() + " !";
-				
-				//To-do: Corrigir formato da data do bDay
-				if (cliente.getbDay() == new Date().toString()) {
-					msg += "\r\n Feliz aniversário!";
-				}
-				
-				for (Noticia noticiaParaEnviar: noticiasParaEnviar) {
-					//To-do: Verificar existencia de URL e tornar o titulo um link para a URL
-					msg += "\r\n" + noticiaParaEnviar.getTitulo();
-					msg += "\r\n" + noticiaParaEnviar.getDescricao();
-				}
-				
-				emailService.sendSimpleMessage(cliente.getEmail(), "Notícias do dia!", msg);
+			for (Noticia noticiaParaEnviar: noticiasParaEnviar) {
+				//To-do: Verificar existencia de URL e tornar o titulo um link para a URL
+				msg += "\r\n" + noticiaParaEnviar.getTitulo();
+				msg += "\r\n" + noticiaParaEnviar.getDescricao();
 			}
+			
+			emailService.sendSimpleMessage(cliente.getEmail(), "Notícias do dia!", msg);
 		}
 	
 	}
