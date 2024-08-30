@@ -16,6 +16,8 @@ import com.br.model.Cliente;
 import com.br.repository.ClienteRepository;
 import com.br.service.CadastroCliente;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class ClienteController {
 	
@@ -33,7 +35,7 @@ public class ClienteController {
 	
 	@PostMapping(path = "api/addCliente")
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public void addCliente(@RequestBody ClienteDTO clienteDto) {
+	public void addCliente(@Valid @RequestBody ClienteDTO clienteDto) {
 		clienteService.add(clienteDto);
 	}
 	

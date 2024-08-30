@@ -1,5 +1,7 @@
 package com.br.scheduler;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,8 +67,8 @@ public class NoticiasScheduler {
 						"<body>\n" +
 						"<div>Bom dia <b>" + cliente.getName() + "</b></div> \n \n";
 				
-				//To-do: Corrigir formato da data do bDay
-				if (cliente.getbDay() == new Date().toString()) {
+				// Validando aniversario.
+				if (validarAniversario(cliente.getbDay())) {
 					msg += "<div> <b> Feliz aniversário! </b></div> \n \n";
 				}
 				
@@ -95,5 +97,20 @@ public class NoticiasScheduler {
 				}
 			}
 		}
+	}
+	
+	private boolean validarAniversario(String bDay) {
+		try {
+			SimpleDateFormat df = new SimpleDateFormat("dd/MM");
+			Date bDayDate = df.parse(bDay);
+			String nowString = df.format(new Date());
+			Date now = df.parse(nowString);
+			if (bDayDate.compareTo(now) == 0) {
+				return true;
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

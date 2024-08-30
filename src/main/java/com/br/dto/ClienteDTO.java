@@ -2,10 +2,17 @@ package com.br.dto;
 
 import java.io.Serializable;
 
-public class ClienteDTO implements Serializable{
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class ClienteDTO implements Serializable {
 
 	private static final long serialVersionUID = 2509935207689243100L;
+	@NotBlank(message = "O nome e obrigatorio")
+	@NotNull
 	private String name;
+	@NotBlank(message = "O email e obrigatorio")
+	@NotNull
 	private String email;
 	private String bDay;
 	
