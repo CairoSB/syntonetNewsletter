@@ -14,6 +14,8 @@ import com.br.repository.ClienteRepository;
 import com.br.repository.NoticiasRepository;
 import com.br.service.EmailService;
 
+import jakarta.mail.MessagingException;
+
 @Service
 public class NoticiasScheduler {
 
@@ -61,7 +63,11 @@ public class NoticiasScheduler {
 				msg += "\r\n" + noticiaParaEnviar.getDescricao();
 			}
 			
-			emailService.sendSimpleMessage(cliente.getEmail(), "Notícias do dia!", msg);
+			try {
+				emailService.sendSimpleMessage(cliente.getEmail(), "Notícias do dia!", msg);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
 		}
 	
 	}
