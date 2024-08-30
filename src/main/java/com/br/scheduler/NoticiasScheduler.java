@@ -37,9 +37,6 @@ public class NoticiasScheduler {
 		// Ira guardar apenas as noticias que estiverem com "Processada" = "false"
 		List<Noticia> noticiasParaEnviar = new ArrayList<>();
 		
-		// Altera o valor do "Processada" de todas noticias no banco para "true"
-		noticiasRepository.processAll();
-		
 		// Filtra apenas as noticias não enviadas ainda (Noticias com "Processada" = "false") 
 		for (Noticia noticia : noticias) {
 			if(!noticia.getProcessada()) {
@@ -47,29 +44,56 @@ public class NoticiasScheduler {
 			}
 		}
 		
-		
-		for (Cliente cliente: clientes) {
-			String msg = new String();
-			msg = "Bom dia " + cliente.getName() + " !";
+		//	Verifica se a noticias a serem enviadas.
+		if(noticiasParaEnviar.isEmpty()) {
+			//	Sem noticias novas para serem enviadas hoje.
+		} else {
+			// Tendo noticias para serem enviadas, alteramos o valor do "Processada" de todas noticias no banco para "true"
+			noticiasRepository.processAll();
 			
-			//To-do: Corrigir formato da data do bDay
-			if (cliente.getbDay() == new Date().toString()) {
-				msg += "\r\n Feliz aniversário!";
-			}
-			
-			for (Noticia noticiaParaEnviar: noticiasParaEnviar) {
-				//To-do: Verificar existencia de URL e tornar o titulo um link para a URL
-				msg += "\r\n" + noticiaParaEnviar.getTitulo();
-				msg += "\r\n" + noticiaParaEnviar.getDescricao();
-			}
-			
-			try {
-				emailService.sendSimpleMessage(cliente.getEmail(), "Notícias do dia!", msg);
-			} catch (MessagingException e) {
-				e.printStackTrace();
+			for (Cliente cliente: clientes) {
+				String msg = "<!doctype html>\n" +
+						"<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\"\n" +
+						"      xmlns:th=\"http://www.thymeleaf.org\">\n" +
+						"<head>\n" +
+						"    <meta charset=\"UTF-8\">\n" +
+						"    <meta name=\"viewport\"\n" +
+						"          content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">\n" +
+						"    <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n" +
+						"    <title>Email</title>\n" +
+						"</head>\n" +
+						"<body>\n" +
+						"<div>Bom dia <b>" + cliente.getName() + "</b></div> \n \n";
+				
+				//To-do: Corrigir formato da data do bDay
+				if (cliente.getbDay() == new Date().toString()) {
+					msg += "<div> <b> Feliz aniversário! </b></div> \n \n";
+				}
+				
+				//	Adicionando as noticias
+				msg += "<div id=\"listNoticias\" > \n";
+				for (Noticia noticiaParaEnviar: noticiasParaEnviar) {
+					msg += "<div> \n";
+					
+					//	Adicionando titulo da noticia.
+					if(noticiaParaEnviar.getLink().length() > 0) {
+						msg += "<a href=\"" + noticiaParaEnviar.getLink() + "\"> " +  noticiaParaEnviar.getTitulo() + " </a>"; 
+					} else {
+						msg += noticiaParaEnviar.getLink();
+					}
+					
+					//	Adicionando descrição da noticia.
+					msg += "\n " + noticiaParaEnviar.getDescricao() + "\n ";
+					msg += "\n </div> \n";
+				}
+				msg += "\n </div>";
+				
+				try {
+					emailService.sendSimpleMessage(cliente.getEmail(), "Notícias do dia!", msg);
+				} catch (MessagingException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-	
 	}
-
 }
